@@ -172,7 +172,7 @@ button:hover, .sb:hover { border-color: #777 !important; background: #000 !impor
 <div class="fg"><label class="fl">COMPANY NAME</label><input type="text" class="fi" name="company-name" required></div>
 <div class="fg"><label class="fl">COMPANY WEBSITE</label><input type="url" class="fi" name="company-website" placeholder="https://..."></div>
 <div class="fg"><label class="fl">DESCRIPTION OF COMPANY</label><input type="text" class="fi" name="description" placeholder="Brief overview..."></div>
-<div class="fg"><label class="fl">PITCH DECK / DATA ROOM</label><div class="dz" id="dZ"><div class="dz-a">&uarr;</div><div class="dz-t">Drop file or paste link</div><input type="file" id="fI" name="pitch-deck" style="display:none"></div></div>
+<div class="fg"><label class="fl">PITCH DECK / DATA ROOM</label><input type="url" class="fi" name="pitch-deck-link" placeholder="Paste DocSend, Google Drive, or Notion link..."></div>
 <div class="fg"><label class="fl">TELEGRAM HANDLE</label><input type="text" class="fi" name="telegram" placeholder="@handle"></div>
 <div class="fg"><label class="fl">EMAIL</label><input type="email" class="fi" name="email" placeholder="founder@company.com"></div>
 <div class="fg"><label class="fl">ADDITIONAL INFO</label><input type="text" class="fi" name="additional-info" placeholder="Anything else..."></div>
@@ -304,7 +304,8 @@ function handleSubmit(e) {
         description: f.querySelector('[name="description"]').value,
         telegram: f.querySelector('[name="telegram"]').value,
         email: f.querySelector('[name="email"]').value,
-        additional_info: f.querySelector('[name="additional-info"]').value
+        additional_info: f.querySelector('[name="additional-info"]').value,
+        pitch_deck_link: (f.querySelector('[name="pitch-deck-link"]') || {}).value || ''
     };
 
     fetch('https://pigeon-api.up.railway.app/api/apply', {
