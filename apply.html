@@ -167,7 +167,8 @@ button:hover, .sb:hover { border-color: #777 !important; background: #000 !impor
 <div class="apply-wrap">
 <h1 class="apply-h">APPLY</h1>
 <div class="apply-line"></div>
-<form id="aF" action="https://formsubmit.co/info@daxos.capital" method="POST" enctype="multipart/form-data"><input type="hidden" name="_subject" value="New Daxos Capital Application"><input type="hidden" name="_captcha" value="false"><input type="hidden" name="_template" value="box">
+<form id="aF" onsubmit="return handleSubmit(event)">
+
 <div class="fg"><label class="fl">COMPANY NAME</label><input type="text" class="fi" name="company-name" required></div>
 <div class="fg"><label class="fl">COMPANY WEBSITE</label><input type="url" class="fi" name="company-website" placeholder="https://..."></div>
 <div class="fg"><label class="fl">DESCRIPTION OF COMPANY</label><input type="text" class="fi" name="description" placeholder="Brief overview..."></div>
@@ -182,30 +183,6 @@ button:hover, .sb:hover { border-color: #777 !important; background: #000 !impor
 </div>
 </main>
 <script>
-document.addEventListener('DOMContentLoaded',function(){
-var f=document.getElementById('aF'),t=document.getElementById('tY');
-if(f)f.addEventListener('submit',function(e){
-  e.preventDefault();
-  var formData = new FormData(f);
-  fetch(f.action, { method:'POST', body: formData })
-    .then(function(){ 
-      f.style.display='none';
-      document.querySelector('.apply-line').style.display='none';
-      document.querySelector('.apply-h').style.display='none';
-      document.querySelector('.ai').style.display='none';
-      t.style.display='block';
-    })
-    .catch(function(){ 
-      f.style.display='none';
-      document.querySelector('.apply-line').style.display='none';
-      document.querySelector('.apply-h').style.display='none';
-      document.querySelector('.ai').style.display='none';
-      t.style.display='block';
-    });
-});
-var dz=document.getElementById('dZ'),fi=document.getElementById('fI');
-if(dz){dz.addEventListener('click',function(){fi.click()});fi.addEventListener('change',function(){if(fi.files.length)dz.querySelector('.dz-t').textContent=fi.files[0].name});}
-});
 </script>
 
 </div>
@@ -312,7 +289,50 @@ jQuery( document ).ready(function() {
 	   //jQuery('#page-header h1#animatedaxoslogo').attr('style', 'font-size: 35px !important;');
    });*/
 });
-</script></body>
+</script>
+<script>
+function handleSubmit(e) {
+    e.preventDefault();
+    var f = document.getElementById('aF');
+    var btn = f.querySelector('button');
+    btn.textContent = 'SENDING...';
+    btn.disabled = true;
+
+    var data = {
+        company_name: f.querySelector('[name="company-name"]').value,
+        website: f.querySelector('[name="company-website"]').value,
+        description: f.querySelector('[name="description"]').value,
+        telegram: f.querySelector('[name="telegram"]').value,
+        email: f.querySelector('[name="email"]').value,
+        additional_info: f.querySelector('[name="additional-info"]').value
+    };
+
+    fetch('https://pigeon-api.up.railway.app/api/apply', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+        f.style.display = 'none';
+        if (document.querySelector('.apply-line')) document.querySelector('.apply-line').style.display = 'none';
+        if (document.querySelector('.apply-h')) document.querySelector('.apply-h').style.display = 'none';
+        if (document.querySelector('.ai')) document.querySelector('.ai').style.display = 'none';
+        document.getElementById('tY').style.display = 'block';
+    })
+    .catch(function() {
+        // Fallback to mailto
+        var body = "Company: " + data.company_name + "\nWebsite: " + data.website + 
+                   "\nDescription: " + data.description + "\nTelegram: " + data.telegram + 
+                   "\nEmail: " + data.email + "\nAdditional: " + data.additional_info;
+        window.location.href = "mailto:info@daxos.capital?subject=" + 
+            encodeURIComponent("New Application: " + data.company_name) + 
+            "&body=" + encodeURIComponent(body);
+    });
+    return false;
+}
+</script>
+</body>
 </html>
     <!-- Start of HubSpot Embed Code -->
     <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/23758099.js"></script>
